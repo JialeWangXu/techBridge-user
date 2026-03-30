@@ -1,0 +1,18 @@
+services:
+  techbridge-user:
+    build: .
+    image: techbridge-user:latest
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user_db
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://host.docker.internal:8761/eureka/
+    networks:
+      - techBridge
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  techBridge:
+    driver: bridge
