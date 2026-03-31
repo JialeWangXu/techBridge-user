@@ -42,8 +42,8 @@ jobs:
       # Organización de la cuenta de Sonar: miw-upm-github
       - name: 🏷️ Prepare container image metadata, artifact from pom & Sonar Organization
         run: |
-          echo "ORGANIZATION=${{ env.ORGANIZATION }}" >> $GITHUB_ENV
-          echo "ARTIFACT=techbridge-user" >> $GITHUB_ENV
+          echo "ORGANIZATION=jialewangxu" >> $GITHUB_ENV
+          echo "PROJECTKEY=jialewangxu_techbridge-user" >> $GITHUB_ENV
 
       - name: 📊 Sonar Analysis
         run: >
