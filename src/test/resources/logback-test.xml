@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <!--Para carga la configuración básica de Spring (colores en la consola, formato de fecha, etc.)-->
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <!--Para todas las clases que pertenezcan a Spring Framework,
+    solo muéstrame mensajes si son Advertencias (WARN) o Errores (ERROR)-->
     <logger name="org.springframework" level="WARN"/>
 </configuration>
