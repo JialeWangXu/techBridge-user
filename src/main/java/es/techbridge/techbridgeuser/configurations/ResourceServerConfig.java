@@ -1,5 +1,6 @@
 package es.techbridge.techbridgeuser.configurations;
 
+import es.techbridge.techbridgeuser.resources.UserResource;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 @EnableMethodSecurity
 public class ResourceServerConfig {
     public static final String PREFIX = "ROLE_";
-    public static final String CLAIM_NAME = "roles";
+    public static final String CLAIM_NAME = "role";
     public static final String AWS_CLAIM_NAME = "cognito:groups";
 
     @Bean
@@ -33,7 +34,8 @@ public class ResourceServerConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request ->
                         request.requestMatchers(HttpMethod.POST,"/users").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/users/provinces").permitAll()
+                                .requestMatchers(HttpMethod.GET,UserResource.USERS + UserResource.PROVINCES).permitAll()
+                                .requestMatchers(HttpMethod.GET,UserResource.USERS + UserResource.CONTACTPREFERENCES).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(

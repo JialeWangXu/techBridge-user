@@ -14,8 +14,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class SeniorUser extends User {
 
-    private String contactPreference;
-
-    private String digitalSkillLevel;
+    @Enumerated(EnumType.STRING)
+    private ContactPreference contactPreference;
 
 }

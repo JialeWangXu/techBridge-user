@@ -37,6 +37,7 @@ public abstract class User extends BaseAuditEntity{
     @Column(nullable = false)
     private UserRole role;
 
+    private String telephone;
     private String address;
     private String city;
 

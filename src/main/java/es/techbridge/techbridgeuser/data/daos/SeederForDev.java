@@ -1,9 +1,6 @@
 package es.techbridge.techbridgeuser.data.daos;
 
-import es.techbridge.techbridgeuser.data.entities.Province;
-import es.techbridge.techbridgeuser.data.entities.SeniorUser;
-import es.techbridge.techbridgeuser.data.entities.UserRole;
-import es.techbridge.techbridgeuser.data.entities.Volunteer;
+import es.techbridge.techbridgeuser.data.entities.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,8 +39,8 @@ public class SeederForDev {
         senior.setPassword(commonPassword);
         senior.setRole(UserRole.SENIOR);
         senior.setProvince(Province.MADRID);
-        senior.setDigitalSkillLevel("BASIC"); // Campo específico de Senior
-        senior.setContactPreference("PHONE");
+        senior.setTelephone("111222333");
+        senior.setContactPreference(ContactPreference.TELEPHONE);
 
         // 3. Creamos un Voluntario de prueba
         Volunteer volunteer = new Volunteer();
@@ -54,6 +51,7 @@ public class SeederForDev {
         volunteer.setPassword(commonPassword);
         volunteer.setRole(UserRole.VOLUNTEER);
         volunteer.setProvince(Province.BARCELONA);
+        volunteer.setTelephone("444555666");
         volunteer.setSpecialties("Smartphones, WhatsApp"); // Campo específico de Volunteer
         volunteer.setIsAvailable(true);
 
