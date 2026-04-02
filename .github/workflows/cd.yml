@@ -4,7 +4,7 @@ on:
     branches: [main]
 
 env:
-  REPOSITORY: jialewangxu/techbridge-gateway # <user>/<repo>
+  REPOSITORY: jialewangxu/techbridge-user # <user>/<repo>
   GHCR_URL: ghcr.io # GitHub Container Registry
 
 jobs:
