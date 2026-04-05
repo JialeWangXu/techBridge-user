@@ -10,6 +10,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -22,6 +24,7 @@ public class UserResource {
     private final UserService userService;
     public static final String USERS = "/users";
     public static final String PROVINCES = "/provinces";
+    public static final String ME = "/me";
     public static final String CONTACTPREFERENCES = "/contactpreferences";
 
     @Autowired
@@ -60,4 +63,22 @@ public class UserResource {
                 .map(ContactPreference::name)
                 .toList());
     }
+
+    @GetMapping(ME)
+    public UserDto getMyProfile(@AuthenticationPrincipal Jwt jwt){
+        String email = jwt.getSubject();
+        return this.userService.getProfile(email);
+    }
+
+    @PutMapping(ME)
+    public UserDto editMyProfile(@AuthenticationPrincipal Jwt jwt,@RequestBody UserDto user){
+        if (user instanceof SeniorUserDto seniorDto) {
+            return this.userService.editProfile(jwt.getSubject(), seniorDto.toSeniorUser());
+        } else if (user instanceof VolunteerDto volunteerDto) {
+            return this.userService.editProfile(jwt.getSubject(), volunteerDto.toVolunteer());
+        } else {
+            throw new IllegalArgumentException("Unknown user type");
+        }
+    }
+
 }
