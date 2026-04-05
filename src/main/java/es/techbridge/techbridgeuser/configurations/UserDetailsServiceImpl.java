@@ -27,7 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         // Convertir el Rol de la BD en una "Authority" que Spring entienda --> empieza con ROLE_
         List<GrantedAuthority> authorities = List.of(
-                new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
+                new SimpleGrantedAuthority("ROLE_" + user.getRole().name().toUpperCase())
         );
 
         return new AuthUser(
