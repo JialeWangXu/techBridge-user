@@ -9,6 +9,6 @@ public enum UserRole {
     }
 
     public String jwtClaimValue() {
-        return this.name().toLowerCase();
+        return this.name();
     }
 }

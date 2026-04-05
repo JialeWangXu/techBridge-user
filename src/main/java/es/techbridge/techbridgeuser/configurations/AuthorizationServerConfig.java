@@ -88,10 +88,13 @@ public class AuthorizationServerConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/error", "/actuator/**").permitAll()
+                        .requestMatchers("/login", "/error", "/actuator","/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(Customizer.withDefaults()) // El formulario de login de Spring
+                .formLogin(form -> form
+                        .loginPage("/login") // <--- Usamos tu página personalizada
+                        .permitAll()
+                )
                 .build();
     }
 
