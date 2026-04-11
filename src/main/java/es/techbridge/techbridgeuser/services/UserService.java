@@ -47,6 +47,20 @@ public class UserService {
         }
     }
 
+    public UserDto getProfileById(UUID id){
+        Optional<User> user = this.userRepository.findById(id);
+        if(user.isPresent()){
+            if(user.get().getRole()== UserRole.SENIOR){
+                return new SeniorUserDto((SeniorUser) user.get());
+            }else{
+                return new VolunteerDto((Volunteer) user.get());
+            }
+        }else{
+            throw new NotFoundException("No user exists in the system with id: "+id);
+        }
+
+    }
+
     public UserDto editProfile(String email, User userInfo){
         User user = findByEmail(email);
         user = updateBasicProfile(user,userInfo);
