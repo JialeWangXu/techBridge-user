@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.UUID;
+
 import static es.techbridge.techbridgeuser.resources.UserResource.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -116,8 +118,19 @@ class UserResourceFT {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().getFirstName()).isEqualTo("Manolo");
+    }
 
+    @Test
+    void testGetUserById(){
+        String url = USERS + ID_ID;
 
+        ResponseEntity<SeniorUserDto> response = this.httpRequestBuilder
+                .get(url, UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .role(UserRole.SENIOR)
+                .exchange(SeniorUserDto.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getFirstName()).contains("Manolo");
     }
 
 }

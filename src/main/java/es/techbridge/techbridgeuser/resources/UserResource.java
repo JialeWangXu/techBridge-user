@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 @Log4j2
 @RestController
@@ -26,7 +27,8 @@ public class UserResource {
     public static final String PROVINCES = "/provinces";
     public static final String ME = "/me";
     public static final String CONTACTPREFERENCES = "/contactpreferences";
-    public static final String EMAIL = "/{email}";
+    public static final String EMAIL = "/email/{email}";
+    public static final String ID_ID = "/id/{id}";
 
     @Autowired
     public UserResource(UserService userService) {
@@ -85,6 +87,11 @@ public class UserResource {
     @GetMapping(EMAIL)
     public UserDto getByEmail(@PathVariable String email){
         return this.userService.getProfile(email);
+    }
+
+    @GetMapping(ID_ID)
+    public UserDto getById(@PathVariable UUID id){
+        return this.userService.getProfileById(id);
     }
 
 }

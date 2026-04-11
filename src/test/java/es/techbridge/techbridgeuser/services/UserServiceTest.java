@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -101,5 +102,12 @@ class UserServiceTest {
         assertThat(userAfterEdit).isPresent();
         assertThat(userAfterEdit.get().getLastName()).isEqualTo("García");
         assertThat(((VolunteerDto)result).getSpecialties()).isEqualTo("PC Componentes");
+    }
+
+    @Test
+    void getById_Should_ReturnSeniorDto(){
+        UserDto result = userService.getProfileById(UUID.fromString("11111111-1111-1111-1111-111111111111"));
+        assertThat(result).isNotNull().isInstanceOf(SeniorUserDto.class);
+        assertThat(result.getFirstName()).isEqualTo("Manolo");
     }
 }
