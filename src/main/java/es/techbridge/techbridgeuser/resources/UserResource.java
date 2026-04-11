@@ -26,6 +26,7 @@ public class UserResource {
     public static final String PROVINCES = "/provinces";
     public static final String ME = "/me";
     public static final String CONTACTPREFERENCES = "/contactpreferences";
+    public static final String EMAIL = "/{email}";
 
     @Autowired
     public UserResource(UserService userService) {
@@ -79,6 +80,11 @@ public class UserResource {
         } else {
             throw new IllegalArgumentException("Unknown user type");
         }
+    }
+
+    @GetMapping(EMAIL)
+    public UserDto getByEmail(@PathVariable String email){
+        return this.userService.getProfile(email);
     }
 
 }

@@ -16,8 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
-import static es.techbridge.techbridgeuser.resources.UserResource.ME;
-import static es.techbridge.techbridgeuser.resources.UserResource.USERS;
+import static es.techbridge.techbridgeuser.resources.UserResource.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Log4j2
@@ -104,6 +103,21 @@ class UserResourceFT {
                 .getBody();
 
         assertThat(response.getFirstName()).isEqualTo("Manolo Editado");
+    }
+
+    @Test
+    void testGetUserByEmail(){
+        String url = USERS + EMAIL;
+
+        ResponseEntity<SeniorUserDto> response = this.httpRequestBuilder
+                .get(url,"manolo@gmail.com")
+                .role(UserRole.SENIOR)
+                .exchange(SeniorUserDto.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getFirstName()).isEqualTo("Manolo");
+
+
     }
 
 }
