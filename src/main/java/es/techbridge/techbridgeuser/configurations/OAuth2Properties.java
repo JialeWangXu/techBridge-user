@@ -17,6 +17,7 @@ public class OAuth2Properties {
     private List<String> openApiRedirectUris = new ArrayList<>();
     private String spaClientId;
     private String spaLoginRedirectUri;
+    private String spaSilenceRenewRedirectUri;
     private String spaLogoutRedirectUri;
     private String apiClientId;
     private String apiClientSecret;

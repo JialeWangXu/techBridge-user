@@ -23,6 +23,7 @@ spring:
           - http://localhost:8081/swagger-ui/oauth2-redirect.html
         spa-client-id: techbridge-spa
         spa-login-redirect-uri: http://localhost:4200/callback
+        spa-silence-renew-redirect-uri: http://localhost:4200/silent-renew.html
         spa-logout-redirect-uri: http://localhost:4200
         api-client-id: internal-api-client
         api-client-secret: internal-secret
@@ -45,6 +46,7 @@ logging:
     root: INFO
     es.techbridge: DEBUG
     org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
 
 eureka:
   instance:
