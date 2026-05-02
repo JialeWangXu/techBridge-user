@@ -29,6 +29,7 @@ public class UserResource {
     public static final String CONTACTPREFERENCES = "/contactpreferences";
     public static final String EMAIL = "/email/{email}";
     public static final String ID_ID = "/id/{id}";
+    public static final String EMAIL_ID = "/email/{email}/id";
 
     @Autowired
     public UserResource(UserService userService) {
@@ -92,6 +93,11 @@ public class UserResource {
     @GetMapping(ID_ID)
     public UserDto getById(@PathVariable UUID id){
         return this.userService.getProfileById(id);
+    }
+
+    @GetMapping(EMAIL_ID)
+    public UUID getIdByEmail(@PathVariable String email){
+        return this.userService.getProfile(email).getId();
     }
 
 }
