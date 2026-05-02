@@ -71,6 +71,12 @@ public class AuthorizationServerConfig {
         return http
                 .securityMatcher(endpoints)
                 .csrf(csrf -> csrf.ignoringRequestMatchers(endpoints))
+                .headers(headers -> headers
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives("frame-ancestors 'self' http://localhost:4200")
+                        )
+                )
                 .with(authorizationServerConfigurer, authorizationServer ->
                         authorizationServer.oidc(Customizer.withDefaults())    // Enable OpenID Connect 1.0
                 )
@@ -122,7 +128,7 @@ public class AuthorizationServerConfig {
                         .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                         .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                         .redirectUri(this.oAuth2Properties.getSpaLoginRedirectUri())
-                        .redirectUri(this.oAuth2Properties.getSpaSilenceRenewRedirectUri())
+                        .redirectUri("http://localhost:4200/silent-renew.html")
                         .scopes(scopes -> scopes.addAll(OAuth2Scope.allJwtClaimValues()))
                         .tokenSettings(tokenSettings)
                         .clientSettings(ClientSettings.builder()
