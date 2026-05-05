@@ -30,11 +30,10 @@ public class SeniorUserDto extends UserDto{
                 .password(this.getPassword())
                 .role(this.getRole())
                 .telephone(this.getTelephone())
-                .address(this.getAddress())
                 .city(this.getCity())
                 .province(this.getProvince())
                 .postalCode(this.getPostalCode())
-                .active(this.getActive())
+                .privacyConsent(this.getPrivacyConsent())
                 .build();
     }
 }

@@ -47,16 +47,9 @@ public abstract class UserDto {
     private UserRole role;
 
     private String telephone;
-    private String address;
     private String city;
     private Province province;
     private Integer postalCode;
-    private Boolean active;
-
-    public void doDefault() {
-        if (Objects.isNull(active)) {
-            this.active = true;
-        }
-    }
+    private Boolean privacyConsent;
 
 }

@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,6 +42,8 @@ public class SeederForDev {
         senior.setProvince(Province.MADRID);
         senior.setTelephone("111222333");
         senior.setContactPreference(ContactPreference.TELEPHONE);
+        senior.setPrivacyConsent(true);
+        senior.setPrivacyConsentTime(LocalDateTime.now());
 
         // 3. Creamos un Voluntario de prueba
         Volunteer volunteer = new Volunteer();
@@ -54,6 +57,8 @@ public class SeederForDev {
         volunteer.setTelephone("444555666");
         volunteer.setSpecialties("Smartphones, WhatsApp"); // Campo específico de Volunteer
         volunteer.setIsAvailable(true);
+        volunteer.setPrivacyConsent(true);
+        volunteer.setPrivacyConsentTime(LocalDateTime.now());
 
         // 4. Guardamos ambos usando el repositorio padre
         this.userRepository.saveAll(List.of(senior, volunteer));

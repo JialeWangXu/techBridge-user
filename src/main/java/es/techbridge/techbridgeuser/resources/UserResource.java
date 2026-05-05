@@ -40,7 +40,6 @@ public class UserResource {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@Valid @RequestBody UserDto userDto){
-        userDto.doDefault();
         User user;
         if (userDto instanceof SeniorUserDto seniorDto) {
             user = seniorDto.toSeniorUser();
