@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @SuperBuilder
@@ -38,12 +39,11 @@ public abstract class User extends BaseAuditEntity{
     private UserRole role;
 
     private String telephone;
-    private String address;
     private String city;
 
     @Enumerated(EnumType.STRING)
     private Province province;
     private Integer postalCode;
-    @Builder.Default
-    private Boolean active = true;
+    private Boolean privacyConsent;
+    private LocalDateTime privacyConsentTime;
 }

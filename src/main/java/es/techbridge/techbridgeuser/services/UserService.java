@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,6 +36,7 @@ public class UserService {
         }
         user.setId(UUID.randomUUID());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if(user.getPrivacyConsent()) user.setPrivacyConsentTime(LocalDateTime.now());
         this.userRepository.save(user);
     }
 
@@ -84,7 +86,6 @@ public class UserService {
         if (updateInfo.getFirstName() !=null) existing.setFirstName(updateInfo.getFirstName());
         if (updateInfo.getLastName()!=null) existing.setLastName(updateInfo.getLastName());
         if (updateInfo.getTelephone()!=null) existing.setTelephone(updateInfo.getTelephone());
-        if (updateInfo.getAddress()!=null) existing.setAddress(updateInfo.getAddress());
         if (updateInfo.getCity()!=null) existing.setCity(updateInfo.getCity());
         if (updateInfo.getProvince()!=null) existing.setProvince(updateInfo.getProvince());
         if(updateInfo.getPostalCode()!=null) existing.setPostalCode(updateInfo.getPostalCode());
