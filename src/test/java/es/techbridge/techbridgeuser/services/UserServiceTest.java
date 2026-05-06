@@ -38,6 +38,7 @@ class UserServiceTest {
                 .email("test1@gmail.com")
                 .password("123")
                 .role(UserRole.SENIOR)
+                .privacyConsent(true)
                 .build();
         this.userService.create(user);
         assertThat(this.userRepository.existsByEmail("test1@gmail.com")).isTrue();
