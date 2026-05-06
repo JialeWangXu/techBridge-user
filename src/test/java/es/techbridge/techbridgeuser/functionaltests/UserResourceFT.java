@@ -42,6 +42,7 @@ class UserResourceFT {
                 .email("test1@gmail.com")
                 .password("123")
                 .role(UserRole.SENIOR)
+                .privacyConsent(true)
                 .build();
         ResponseEntity<Void> response = this.httpRequestBuilder
                 .post(USERS).body(userDto).exchange(Void.class);
@@ -58,6 +59,7 @@ class UserResourceFT {
                 .role(UserRole.VOLUNTEER)
                 .isAvailable(true)
                 .specialties("Testing")
+                .privacyConsent(true)
                 .build();
         ResponseEntity<Void> response = this.httpRequestBuilder
                 .post(USERS).body(userDto).exchange(Void.class);
