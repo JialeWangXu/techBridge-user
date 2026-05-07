@@ -229,7 +229,7 @@
         <div class="welcome-text">
             <h1>Inicia sesión en</h1>
             <h2>TechBridge</h2> <p>If you don't have an account register</p>
-            <p>You can <a href="http://localhost:4200/register">Register here!</a></p>
+            <p>You can <a th:href="${@environment.getProperty('app.register')}">Register here!</a></p>
         </div>
         <div class="image-container">
             <img th:src="@{/images/personaje.png}" alt="Personaje 3D" class="character-image">
