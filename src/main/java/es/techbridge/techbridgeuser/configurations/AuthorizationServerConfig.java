@@ -80,7 +80,9 @@ public class AuthorizationServerConfig {
                         authorizationServer.oidc(Customizer.withDefaults())    // Enable OpenID Connect 1.0
                 )
                 .authorizeHttpRequests(authorize ->
-                        authorize.anyRequest().authenticated()
+                        authorize
+                                .requestMatchers("/.well-known/**", "/oauth2/jwks").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptions -> exceptions
                         .defaultAuthenticationEntryPointFor(
