@@ -117,7 +117,7 @@ public class AuthorizationServerConfig {
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
         TokenSettings tokenSettings = TokenSettings.builder()
-                .accessTokenTimeToLive(Duration.ofMinutes(1))
+                .accessTokenTimeToLive(Duration.ofHours(5))
                 .refreshTokenTimeToLive(Duration.ofDays(1))
                 .build();
 
