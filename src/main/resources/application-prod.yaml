@@ -8,6 +8,15 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: false
+  security:
+    oauth2:
+      clients:
+        issuer-uri: ${ISSUER-URI}
+        spa-client-id: techbridge-spa
+        spa-login-redirect-uri: ${LOGIN_URI}
+        spa-logout-redirect-uri: ${LOGOUT_URI}
+        api-client-id: ${API_CLIENT_ID}
+        api-client-secret: ${API_CLIENT_SECRET}
 
 eureka:
   client:

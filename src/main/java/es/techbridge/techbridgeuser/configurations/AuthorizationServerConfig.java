@@ -45,7 +45,6 @@ import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -74,7 +73,7 @@ public class AuthorizationServerConfig {
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
                         .contentSecurityPolicy(csp -> csp
-                                .policyDirectives("frame-ancestors 'self' http://localhost:4200")
+                                .policyDirectives("frame-ancestors 'self' *")
                         )
                 )
                 .with(authorizationServerConfigurer, authorizationServer ->
