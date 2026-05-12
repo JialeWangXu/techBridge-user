@@ -14,8 +14,8 @@ public class AuthUser extends User {
     private final String firstName;
 
     public AuthUser(String username, String password,
-                    Collection<? extends GrantedAuthority> authorities, String firstName) {
-        super(username, password, authorities);
+                    Collection<? extends GrantedAuthority> authorities, String firstName, boolean enabled) {
+        super(username, password, enabled, true, true, true, authorities);
         this.firstName = firstName;
     }
 

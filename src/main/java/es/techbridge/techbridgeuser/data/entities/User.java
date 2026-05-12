@@ -46,4 +46,6 @@ public abstract class User extends BaseAuditEntity{
     private Integer postalCode;
     private Boolean privacyConsent;
     private LocalDateTime privacyConsentTime;
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private Boolean active;
 }

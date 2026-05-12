@@ -12,6 +12,18 @@ spring:
     default-property-inclusion: NON_NULL
   jpa: # evitar el error de "LazyInitializationException" de forma descontrolada
     open-in-view: false
+  mail:
+    host: smtp.upm.es
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        from: ${MAIL_USERNAME}
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
   security:
     oauth2:
@@ -60,3 +72,6 @@ eureka:
 
 app:
   register: ${REGISTER_URI:http://localhost:4200/register}
+  activation-url: ${ACTIVATION_URL:http://localhost:8081/users/activate}
+  public-base-url: ${PUBLIC_BASE_URL:http://localhost:8081}
+  login-url: ${LOGIN_URL:http://localhost:4200/}

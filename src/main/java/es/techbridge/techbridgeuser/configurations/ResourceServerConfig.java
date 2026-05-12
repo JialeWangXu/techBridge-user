@@ -34,8 +34,10 @@ public class ResourceServerConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request ->
                         request.requestMatchers(HttpMethod.POST,"/users").permitAll()
+                                .requestMatchers(HttpMethod.POST, UserResource.USERS + UserResource.ACTIVATION_TOKEN).permitAll()
+                                .requestMatchers(HttpMethod.GET, UserResource.USERS + UserResource.ACTIVATE).permitAll()
                                 .requestMatchers(HttpMethod.GET,UserResource.USERS + UserResource.PROVINCES).permitAll()
-                                .requestMatchers(HttpMethod.GET,UserResource.USERS + UserResource.CONTACTPREFERENCES).permitAll()
+                                .requestMatchers(HttpMethod.GET,UserResource.USERS + UserResource.CONTACT_PREFERENCES).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(

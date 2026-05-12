@@ -245,7 +245,34 @@
 
         <form th:action="@{/login}" method="post">
             <div th:if="${param.error}" class="error-message">
-                Email o contraseña incorrectos.
+                <th:block th:with="lastExc=${session['SPRING_SECURITY_LAST_EXCEPTION']}">
+
+                    <div th:if="${lastExc != null}">
+
+                        <div th:if="${lastExc instanceof T(org.springframework.security.authentication.DisabledException)}">
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>
+                            <strong>Tu cuenta aún no está activa.</strong>
+                            <br>Por favor, revisa tu correo y pulsa en el enlace que te enviamos para activarla.
+                        </div>
+
+                        <div th:if="${lastExc instanceof T(org.springframework.security.authentication.BadCredentialsException)}">
+                            <i class="bi bi-x-circle-fill me-2"></i>
+                            <strong>Email o contraseña incorrectos.</strong>
+                            <br>Por favor, verifica tus datos e inténtalo de nuevo.
+                        </div>
+
+                        <div th:if="${!(lastExc instanceof T(org.springframework.security.authentication.DisabledException)) && !(lastExc instanceof T(org.springframework.security.authentication.BadCredentialsException))}">
+                            <i class="bi bi-shield-lock-fill me-2"></i>
+                            Ha ocurrido un problema al iniciar sesión. Inténtalo más tarde.
+                        </div>
+
+                    </div>
+
+                    <div th:if="${lastExc == null}">
+                        Email o contraseña incorrectos.
+                    </div>
+
+                </th:block>
             </div>
 
             <div class="input-group">

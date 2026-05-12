@@ -139,6 +139,15 @@ public class HttpRequestBuilder {
         return finalUrl.toString().replaceFirst("&", "?");
     }
 
+    private void clearRequestState() {
+        this.method = null;
+        this.url = null;
+        this.uriVars = null;
+        this.role = null;
+        this.body = null;
+        this.queryParams.clear();
+    }
+
     public <R> ResponseEntity<R> exchange(Class<R> responseType) {
         if (this.method == null) {
             throw new IllegalArgumentException("HTTP method is required.");
@@ -147,13 +156,17 @@ public class HttpRequestBuilder {
             throw new IllegalArgumentException("URL is required.");
         }
         HttpEntity<?> entity = buildHttpEntity();
-        return testRestTemplate.exchange(
-                this.buildFinalUrl(),
-                this.method,
-                entity,
-                responseType,
-                this.uriVars != null ? this.uriVars : new Object[]{}
-        );
+        try {
+            return testRestTemplate.exchange(
+                    this.buildFinalUrl(),
+                    this.method,
+                    entity,
+                    responseType,
+                    this.uriVars != null ? this.uriVars : new Object[]{}
+            );
+        } finally {
+            clearRequestState();
+        }
     }
 
 }
