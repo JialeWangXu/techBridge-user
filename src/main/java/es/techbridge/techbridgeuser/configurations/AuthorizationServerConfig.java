@@ -98,7 +98,7 @@ public class AuthorizationServerConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/error", "/actuator","/images/**").permitAll()
+                        .requestMatchers("/login", "/error", "/actuator","/images/**", "/users/activate", "/users/activation-token").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
@@ -117,7 +117,7 @@ public class AuthorizationServerConfig {
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
         TokenSettings tokenSettings = TokenSettings.builder()
-                .accessTokenTimeToLive(Duration.ofHours(5))
+                .accessTokenTimeToLive(Duration.ofMinutes(5))
                 .refreshTokenTimeToLive(Duration.ofDays(1))
                 .build();
 

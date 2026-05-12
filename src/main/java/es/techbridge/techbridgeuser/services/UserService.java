@@ -1,18 +1,24 @@
 package es.techbridge.techbridgeuser.services;
 
 import es.techbridge.techbridgeuser.data.daos.UserRepository;
+import es.techbridge.techbridgeuser.data.daos.VerificationTokenRepository;
 import es.techbridge.techbridgeuser.data.entities.SeniorUser;
 import es.techbridge.techbridgeuser.data.entities.User;
 import es.techbridge.techbridgeuser.data.entities.UserRole;
+import es.techbridge.techbridgeuser.data.entities.VerificationToken;
 import es.techbridge.techbridgeuser.data.entities.Volunteer;
 import es.techbridge.techbridgeuser.resources.dtos.SeniorUserDto;
 import es.techbridge.techbridgeuser.resources.dtos.UserDto;
 import es.techbridge.techbridgeuser.resources.dtos.VolunteerDto;
+import es.techbridge.techbridgeuser.services.exceptions.ActivationTokenExpiredException;
+import es.techbridge.techbridgeuser.services.exceptions.BadRequestException;
 import es.techbridge.techbridgeuser.services.exceptions.ConflictException;
 import es.techbridge.techbridgeuser.services.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -22,22 +28,91 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final VerificationTokenRepository verificationTokenRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
+    private final String activationUrl;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+    public UserService(UserRepository userRepository,
+                       VerificationTokenRepository verificationTokenRepository,
+                       PasswordEncoder passwordEncoder,
+                       MailService mailService,
+                       @Value("${app.activation-url:http://localhost:8081/users/activate}") String activationUrl){
         this.userRepository = userRepository;
+        this.verificationTokenRepository = verificationTokenRepository;
         this.passwordEncoder = passwordEncoder;
+        this.mailService = mailService;
+        this.activationUrl = activationUrl;
     }
 
+    @Transactional
     public void create(User user){
         if(userRepository.existsByEmail(user.getEmail())){
             throw new ConflictException("The email already exists");
         }
         user.setId(UUID.randomUUID());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        if(user.getPrivacyConsent()) user.setPrivacyConsentTime(LocalDateTime.now());
-        this.userRepository.save(user);
+        if(Boolean.TRUE.equals(user.getPrivacyConsent())) user.setPrivacyConsentTime(LocalDateTime.now());
+        user.setActive(false);
+        User savedUser = this.userRepository.save(user);
+        sendActivationEmail(savedUser);
+    }
+
+    @Transactional
+    public void activateAccount(String tokenValue){
+        VerificationToken token = verificationTokenRepository.findByToken(tokenValue)
+                .orElseThrow(() -> new BadRequestException("Invalid activation token"));
+
+        if (Boolean.TRUE.equals(token.getUsed())) {
+            throw new BadRequestException("Activation token has already been used");
+        }
+        if (token.getExpirationDate().isBefore(LocalDateTime.now())) {
+            throw new ActivationTokenExpiredException();
+        }
+
+        User user = token.getUser();
+        user.setActive(true);
+        token.setUsed(true);
+        userRepository.save(user);
+        verificationTokenRepository.save(token);
+    }
+
+    @Transactional
+    public void resendActivationEmail(String expiredTokenValue){
+        VerificationToken expiredToken = verificationTokenRepository.findByToken(expiredTokenValue)
+                .orElseThrow(() -> new BadRequestException("Invalid activation token"));
+
+        if (Boolean.TRUE.equals(expiredToken.getUsed())) {
+            throw new BadRequestException("Activation token has already been used");
+        }
+        if (!expiredToken.getExpirationDate().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Activation token has not expired");
+        }
+
+        User user = expiredToken.getUser();
+        if (Boolean.TRUE.equals(user.getActive())) {
+            throw new BadRequestException("The account is already active");
+        }
+        verificationTokenRepository.delete(expiredToken);
+        verificationTokenRepository.flush();
+        sendActivationEmail(user);
+    }
+
+    private void sendActivationEmail(User user) {
+        verificationTokenRepository.deleteByUserAndUsedFalse(user);
+        String tokenValue = UUID.randomUUID().toString();
+        VerificationToken token = VerificationToken.builder()
+                .token(tokenValue)
+                .expirationDate(LocalDateTime.now().plusMinutes(2))
+                .used(false)
+                .user(user)
+                .build();
+        verificationTokenRepository.save(token);
+
+        String separator = activationUrl.contains("?") ? "&" : "?";
+        String activationLink = activationUrl + separator + "token=" + tokenValue;
+        mailService.sendActivationEmail(user.getEmail(), activationLink);
     }
 
     public UserDto getProfile(String email){

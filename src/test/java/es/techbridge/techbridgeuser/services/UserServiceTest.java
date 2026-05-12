@@ -1,17 +1,22 @@
 package es.techbridge.techbridgeuser.services;
 
 import es.techbridge.techbridgeuser.data.daos.UserRepository;
+import es.techbridge.techbridgeuser.data.daos.VerificationTokenRepository;
 import es.techbridge.techbridgeuser.data.entities.*;
 import es.techbridge.techbridgeuser.resources.dtos.SeniorUserDto;
 import es.techbridge.techbridgeuser.resources.dtos.UserDto;
 import es.techbridge.techbridgeuser.resources.dtos.VolunteerDto;
+import es.techbridge.techbridgeuser.services.exceptions.BadRequestException;
 import es.techbridge.techbridgeuser.services.exceptions.ConflictException;
 import es.techbridge.techbridgeuser.services.exceptions.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 class UserServiceTest {
 
     @Autowired
@@ -27,6 +33,12 @@ class UserServiceTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private VerificationTokenRepository verificationTokenRepository;
+
+    @MockitoBean
+    private MailService mailService;
 
 
     @Test
@@ -41,7 +53,10 @@ class UserServiceTest {
                 .privacyConsent(true)
                 .build();
         this.userService.create(user);
-        assertThat(this.userRepository.existsByEmail("test1@gmail.com")).isTrue();
+        Optional<User> createdUser = this.userRepository.findByEmail("test1@gmail.com");
+        assertThat(createdUser).isPresent();
+        assertThat(createdUser.get().getActive()).isFalse();
+        assertThat(this.verificationTokenRepository.existsByUserEmailAndUsedFalse("test1@gmail.com")).isTrue();
     }
 
     @Test
@@ -110,5 +125,79 @@ class UserServiceTest {
         UserDto result = userService.getProfileById(UUID.fromString("11111111-1111-1111-1111-111111111111"));
         assertThat(result).isNotNull().isInstanceOf(SeniorUserDto.class);
         assertThat(result.getFirstName()).isEqualTo("Manolo");
+    }
+
+    @Test
+    void activateAccount_ShouldActivateUserAndUseToken() {
+        User user = createInactiveSenior("activate-user@gmail.com");
+        VerificationToken token = createToken(user, LocalDateTime.now().plusHours(24), false);
+
+        userService.activateAccount(token.getToken());
+
+        Optional<User> activatedUser = userRepository.findByEmail("activate-user@gmail.com");
+        Optional<VerificationToken> usedToken = verificationTokenRepository.findByToken(token.getToken());
+        assertThat(activatedUser).isPresent();
+        assertThat(activatedUser.get().getActive()).isTrue();
+        assertThat(usedToken).isPresent();
+        assertThat(usedToken.get().getUsed()).isTrue();
+    }
+
+    @Test
+    void activateAccount_ShouldThrowBadRequestException_WhenTokenExpired() {
+        User user = createInactiveSenior("expired-user@gmail.com");
+        VerificationToken token = createToken(user, LocalDateTime.now().minusMinutes(1), false);
+
+        assertThrows(BadRequestException.class, () -> userService.activateAccount(token.getToken()));
+    }
+
+    @Test
+    void activateAccount_ShouldThrowBadRequestException_WhenTokenUsed() {
+        User user = createInactiveSenior("used-user@gmail.com");
+        VerificationToken token = createToken(user, LocalDateTime.now().plusHours(24), true);
+
+        assertThrows(BadRequestException.class, () -> userService.activateAccount(token.getToken()));
+    }
+
+    @Test
+    void resendActivationEmail_ShouldReplacePreviousUnusedToken() {
+        User user = createInactiveSenior("resend-user@gmail.com");
+        VerificationToken oldToken = createToken(user, LocalDateTime.now().minusMinutes(1), false);
+
+        userService.resendActivationEmail(oldToken.getToken());
+
+        assertThat(verificationTokenRepository.findByToken(oldToken.getToken())).isNotPresent();
+        assertThat(verificationTokenRepository.existsByUserEmailAndUsedFalse("resend-user@gmail.com")).isTrue();
+    }
+
+    @Test
+    void resendActivationEmail_ShouldThrowBadRequestException_WhenTokenNotExpired() {
+        User user = createInactiveSenior("not-expired-user@gmail.com");
+        VerificationToken token = createToken(user, LocalDateTime.now().plusHours(24), false);
+
+        assertThrows(BadRequestException.class, () -> userService.resendActivationEmail(token.getToken()));
+    }
+
+    private User createInactiveSenior(String email) {
+        User user = SeniorUser.builder()
+                .contactPreference(ContactPreference.TELEPHONE)
+                .firstName("Activation")
+                .lastName("Test")
+                .email(email)
+                .password("123")
+                .role(UserRole.SENIOR)
+                .privacyConsent(true)
+                .active(false)
+                .build();
+        user.setId(UUID.randomUUID());
+        return userRepository.save(user);
+    }
+
+    private VerificationToken createToken(User user, LocalDateTime expirationDate, boolean used) {
+        return verificationTokenRepository.save(VerificationToken.builder()
+                .token(UUID.randomUUID().toString())
+                .expirationDate(expirationDate)
+                .used(used)
+                .user(user)
+                .build());
     }
 }

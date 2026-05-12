@@ -16,19 +16,20 @@ import java.util.UUID;
 public class SeederForDev {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private  final VerificationTokenRepository verificationTokenRepository;
 
-    public SeederForDev(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public SeederForDev(UserRepository userRepository, PasswordEncoder passwordEncoder, VerificationTokenRepository verificationTokenRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.verificationTokenRepository = verificationTokenRepository;
         this.seedDatabase();
     }
 
     private void seedDatabase() {
         log.warn("------- 🎲 Seeding TechBridge Data (Dev Profile) -----------");
 
-        // 1. Limpiamos por si acaso (Ojo: JPA borrará en cascada si está bien configurado)
+        this.verificationTokenRepository.deleteAll();
         this.userRepository.deleteAll();
-
         String commonPassword = passwordEncoder.encode("password123");
 
         // 2. Creamos un Senior de prueba
@@ -44,6 +45,7 @@ public class SeederForDev {
         senior.setContactPreference(ContactPreference.TELEPHONE);
         senior.setPrivacyConsent(true);
         senior.setPrivacyConsentTime(LocalDateTime.now());
+        senior.setActive(true);
 
         // 3. Creamos un Voluntario de prueba
         Volunteer volunteer = new Volunteer();
@@ -59,6 +61,7 @@ public class SeederForDev {
         volunteer.setIsAvailable(true);
         volunteer.setPrivacyConsent(true);
         volunteer.setPrivacyConsentTime(LocalDateTime.now());
+        volunteer.setActive(false);
 
         // 4. Guardamos ambos usando el repositorio padre
         this.userRepository.saveAll(List.of(senior, volunteer));

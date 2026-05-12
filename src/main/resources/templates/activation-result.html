@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activaci&oacute;n de cuenta - TechBridge</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f6f8fb;
+        }
+
+        .main-container {
+            display: flex;
+            width: 90%;
+            max-width: 1100px;
+            min-height: 620px;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .left-side {
+            flex: 1.2;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+        }
+
+        .image-logo-container {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .logo-image {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .welcome-text h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: #333;
+            line-height: 1.1;
+        }
+
+        .welcome-text h2 {
+            font-size: 1.8rem;
+            margin: 10px 0;
+            color: #555;
+            font-weight: 400;
+        }
+
+        .welcome-text p {
+            color: #666;
+            margin: 8px 0;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .image-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .character-image {
+            max-height: 80%;
+            max-width: 100%;
+            object-fit: contain;
+            transform: scale(0.7);
+        }
+
+        .right-side {
+            flex: 1;
+            background-color: #fdfdff;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .mobile-logo {
+            display: none;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            align-self: flex-start;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background-color: #e9f4ff;
+            color: #003366;
+            font-size: 0.95rem;
+            font-weight: 800;
+            margin-bottom: 18px;
+        }
+
+        .right-side h3 {
+            font-size: 2rem;
+            margin: 0 0 18px 0;
+            color: #333;
+            line-height: 1.2;
+        }
+
+        .message {
+            color: #555;
+            font-size: 1.2rem;
+            line-height: 1.55;
+            margin: 0 0 28px 0;
+        }
+
+        .input-group {
+            margin-bottom: 0;
+        }
+
+        .activation-btn {
+            width: 100%;
+            padding: 18px;
+            background-color: #8EBFFB;
+            color: #003366;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(142, 191, 251, 0.4);
+            text-transform: uppercase;
+        }
+
+        .activation-btn:hover,
+        .activation-btn:focus {
+            background-color: #7ab2f0;
+            color: #002244;
+            outline: 3px solid #003366;
+            outline-offset: 2px;
+        }
+
+        .login-link {
+            display: block;
+            box-sizing: border-box;
+            width: 100%;
+            padding: 18px;
+            background-color: #8EBFFB;
+            color: #003366;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(142, 191, 251, 0.4);
+            font-weight: 900;
+            text-decoration: none;
+            font-size: 1.05rem;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .login-link:hover,
+        .login-link:focus {
+            background-color: #7ab2f0;
+            color: #002244;
+            outline: 3px solid #003366;
+            outline-offset: 2px;
+        }
+
+        @media (max-width: 850px) {
+            body {
+                align-items: flex-start;
+                padding: 20px 0;
+            }
+
+            .main-container {
+                flex-direction: column;
+                min-height: auto;
+                width: 95%;
+                max-width: 450px;
+            }
+
+            .left-side {
+                display: none;
+            }
+
+            .right-side {
+                padding: 40px 30px;
+            }
+
+            .mobile-logo {
+                display: flex;
+            }
+
+            .mobile-logo .logo-image {
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <div class="left-side">
+        <div class="image-logo-container">
+            <img th:src="@{/images/logo-clean.png}" alt="logo TechBridge" class="logo-image">
+        </div>
+        <div class="welcome-text">
+            <h1>Activaci&oacute;n de cuenta</h1>
+            <h2>TechBridge</h2>
+            <p>Hemos preparado esta pantalla con texto grande, buen contraste y acciones sencillas.</p>
+        </div>
+        <div class="image-container">
+            <img th:src="@{/images/personaje.png}" alt="" class="character-image">
+        </div>
+    </div>
+
+    <main class="right-side">
+        <div class="mobile-logo">
+            <img th:src="@{/images/logo-clean.png}" alt="logo TechBridge" class="logo-image">
+        </div>
+
+        <span class="status-badge" th:text="${statusLabel}">Estado</span>
+        <h3 th:text="${title}">Cuenta activada</h3>
+        <p class="message" th:text="${message}">Mensaje de activaci&oacute;n.</p>
+
+        <form th:if="${showResendForm}" th:action="@{/users/activation-token}" method="post">
+            <div class="input-group">
+                <input type="hidden" name="token" th:value="${activationToken}">
+            </div>
+            <button type="submit" class="activation-btn">Volver a enviar email de activaci&oacute;n</button>
+        </form>
+
+        <a th:if="${showLoginLink}" th:href="${@environment.getProperty('app.login-url', '/login')}" class="login-link">
+            Pulsa para login
+        </a>
+    </main>
+</div>
+</body>
+</html>
