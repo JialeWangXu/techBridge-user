@@ -61,7 +61,7 @@ public class SeederForDev {
         volunteer.setIsAvailable(true);
         volunteer.setPrivacyConsent(true);
         volunteer.setPrivacyConsentTime(LocalDateTime.now());
-        volunteer.setActive(false);
+        volunteer.setActive(true);
 
         // 4. Guardamos ambos usando el repositorio padre
         this.userRepository.saveAll(List.of(senior, volunteer));
