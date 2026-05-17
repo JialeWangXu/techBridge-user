@@ -98,7 +98,8 @@ public class AuthorizationServerConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/error", "/actuator","/images/**", "/users/activate", "/users/activation-token").permitAll()
+                        .requestMatchers("/login", "/error", "/actuator","/images/**", "/users/activate", "/users/activation-token",
+                                "/users/forget-password", "/users/forget-password-token").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers

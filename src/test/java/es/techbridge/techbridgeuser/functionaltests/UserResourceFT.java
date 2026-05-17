@@ -6,6 +6,7 @@ import es.techbridge.techbridgeuser.data.entities.ContactPreference;
 import es.techbridge.techbridgeuser.data.entities.User;
 import es.techbridge.techbridgeuser.data.entities.UserRole;
 import es.techbridge.techbridgeuser.data.entities.VerificationToken;
+import es.techbridge.techbridgeuser.data.entities.VerificationTokenType;
 import es.techbridge.techbridgeuser.resources.dtos.SeniorUserDto;
 import es.techbridge.techbridgeuser.resources.dtos.UserDto;
 import es.techbridge.techbridgeuser.resources.dtos.VolunteerDto;
@@ -168,6 +169,7 @@ class UserResourceFT {
                 .token(UUID.randomUUID().toString())
                 .expirationDate(LocalDateTime.now().plusHours(24))
                 .used(false)
+                .tokenType(VerificationTokenType.ACTIVATION)
                 .user(user)
                 .build());
 
@@ -192,6 +194,7 @@ class UserResourceFT {
                 .token(UUID.randomUUID().toString())
                 .expirationDate(LocalDateTime.now().minusMinutes(1))
                 .used(false)
+                .tokenType(VerificationTokenType.ACTIVATION)
                 .user(user)
                 .build());
 

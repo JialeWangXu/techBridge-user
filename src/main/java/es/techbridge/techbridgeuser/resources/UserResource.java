@@ -8,6 +8,7 @@ import es.techbridge.techbridgeuser.resources.dtos.*;
 import es.techbridge.techbridgeuser.services.UserService;
 import es.techbridge.techbridgeuser.services.exceptions.ActivationTokenExpiredException;
 import es.techbridge.techbridgeuser.services.exceptions.BadRequestException;
+import es.techbridge.techbridgeuser.services.exceptions.PasswordResetTokenExpiredException;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,10 @@ public class UserResource {
     public static final String ACTIVATE = "/activate";
     public static final String ACTIVATION_TOKEN = "/activation-token";
     public static final String FILTERES = "/filtered";
+    public static final String FORGET_PASSWORD="/forget-password";
+    public static final String FORGET_PASSWORD_TOKEN="/forget-password-token";
+
+    private static final String EXPIRED_LINK = "Enlace caducado";
 
     @Autowired
     public UserResource(UserService userService) {
@@ -61,7 +66,7 @@ public class UserResource {
 
     @PreAuthorize("permitAll()")
     @GetMapping(ACTIVATE)
-    public ModelAndView activate(@RequestParam String token){
+    public ModelAndView activateAccount(@RequestParam String token){
         try {
             this.userService.activateAccount(token);
             return activationView(
@@ -74,7 +79,7 @@ public class UserResource {
             );
         } catch (ActivationTokenExpiredException exception) {
             return activationView(
-                    "Enlace caducado",
+                    EXPIRED_LINK,
                     "El enlace ha caducado",
                     "Por seguridad, este enlace ya no se puede usar. Pulse el boton para recibir un nuevo email de activacion.",
                     true,
@@ -185,6 +190,105 @@ public class UserResource {
     @PostMapping(FILTERES)
     public List<UUID> getFilteredUserIds(@RequestBody UserFiltersDto userFiltersDto){
         return this.userService.getFilteredUserIds(userFiltersDto);
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping(FORGET_PASSWORD)
+    public ModelAndView forgetPassword() {
+        return forgetPasswordView(false, null);
+    }
+
+    @PreAuthorize("permitAll()")
+    @PostMapping(FORGET_PASSWORD)
+    public ModelAndView sendForgetPasswordEmail(@RequestParam String email){
+        this.userService.sendForgetPasswordEmail(email);
+        return forgetPasswordView(true, null);
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping(FORGET_PASSWORD_TOKEN)
+    public ModelAndView changePassword(@RequestParam String token) {
+        try {
+            this.userService.validatePasswordResetToken(token);
+            return resetPasswordView(
+                    "Cambiar contraseña",
+                    "Escriba su nueva contraseña dos veces para confirmar el cambio.",
+                    token,
+                    false,
+                    false
+            );
+        } catch (PasswordResetTokenExpiredException exception) {
+            return resetPasswordView(
+                    EXPIRED_LINK,
+                    "Por seguridad, este enlace ya no se puede usar. Vuelva a solicitar la recuperación de contraseña.",
+                    null,
+                    false,
+                    false
+            );
+        } catch (BadRequestException exception) {
+            return resetPasswordView(
+                    "Enlace no válido",
+                    "Este enlace no es válido o ya se ha utilizado. Vuelva a solicitar la recuperación de contraseña.",
+                    null,
+                    false,
+                    false
+            );
+        }
+    }
+
+    @PreAuthorize("permitAll()")
+    @PostMapping(FORGET_PASSWORD_TOKEN)
+    public ModelAndView changePassword(@RequestParam String token,
+                                       @RequestParam String newPassword,
+                                       @RequestParam String confirmPassword) {
+        try {
+            this.userService.changePasswordWithToken(token, newPassword, confirmPassword);
+            return resetPasswordView(
+                    "Contraseña actualizada",
+                    "Su contraseña se ha cambiado correctamente. Ya puede iniciar sesión con la nueva contraseña.",
+                    null,
+                    false,
+                    true
+            );
+        } catch (PasswordResetTokenExpiredException exception) {
+            return resetPasswordView(
+                    EXPIRED_LINK,
+                    "Por seguridad, este enlace ya no se puede usar. Vuelva a solicitar la recuperación de contraseña.",
+                    null,
+                    false,
+                    false
+            );
+        } catch (BadRequestException exception) {
+            return resetPasswordView(
+                    "No se pudo cambiar la contraseña",
+                    "Revise que las dos contraseñas coincidan y vuelva a intentarlo.",
+                    token,
+                    true,
+                    false
+            );
+        }
+    }
+
+    private ModelAndView forgetPasswordView(boolean emailSent, String errorMessage) {
+        ModelAndView modelAndView = new ModelAndView("forget-password-confirmation");
+        modelAndView.addObject("emailSent", emailSent);
+        modelAndView.addObject("errorMessage", errorMessage);
+        return modelAndView;
+    }
+
+    private ModelAndView resetPasswordView(String title,
+                                           String message,
+                                           String token,
+                                           boolean showPasswordError,
+                                           boolean showLoginLink) {
+        ModelAndView modelAndView = new ModelAndView("reset-password");
+        modelAndView.addObject("title", title);
+        modelAndView.addObject("message", message);
+        modelAndView.addObject("token", token);
+        modelAndView.addObject("showForm", token != null);
+        modelAndView.addObject("showPasswordError", showPasswordError);
+        modelAndView.addObject("showLoginLink", showLoginLink);
+        return modelAndView;
     }
 
 }

@@ -75,3 +75,4 @@ app:
   activation-url: ${ACTIVATION_URL:http://localhost:8081/users/activate}
   public-base-url: ${PUBLIC_BASE_URL:http://localhost:8081}
   login-url: ${LOGIN_URL:http://localhost:4200/}
+  recover-url: ${RECOVER_URL:http://localhost:8081/users/forget-password-token}
