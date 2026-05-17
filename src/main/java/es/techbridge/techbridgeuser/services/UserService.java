@@ -2,11 +2,7 @@ package es.techbridge.techbridgeuser.services;
 
 import es.techbridge.techbridgeuser.data.daos.UserRepository;
 import es.techbridge.techbridgeuser.data.daos.VerificationTokenRepository;
-import es.techbridge.techbridgeuser.data.entities.SeniorUser;
-import es.techbridge.techbridgeuser.data.entities.User;
-import es.techbridge.techbridgeuser.data.entities.UserRole;
-import es.techbridge.techbridgeuser.data.entities.VerificationToken;
-import es.techbridge.techbridgeuser.data.entities.Volunteer;
+import es.techbridge.techbridgeuser.data.entities.*;
 import es.techbridge.techbridgeuser.resources.dtos.SeniorUserDto;
 import es.techbridge.techbridgeuser.resources.dtos.UserDto;
 import es.techbridge.techbridgeuser.resources.dtos.VolunteerDto;
@@ -21,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -184,6 +181,12 @@ public class UserService {
             if(updateInfo.getIsAvailable()!=null) existing.setIsAvailable(updateInfo.getIsAvailable());
             return userRepository.save(existing);
         }
+    }
+
+    public List<UUID> getFilteredUserIds(UserFiltersDto filtersDto){
+        return this.userRepository.findSeniorIdsWithFilters(filtersDto.getContactPreference()
+                ,filtersDto.getProvince(),
+                filtersDto.getCity());
     }
 
 }

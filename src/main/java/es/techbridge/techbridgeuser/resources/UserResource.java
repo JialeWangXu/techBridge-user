@@ -3,6 +3,7 @@ package es.techbridge.techbridgeuser.resources;
 import es.techbridge.techbridgeuser.data.entities.ContactPreference;
 import es.techbridge.techbridgeuser.data.entities.Province;
 import es.techbridge.techbridgeuser.data.entities.User;
+import es.techbridge.techbridgeuser.data.entities.UserFiltersDto;
 import es.techbridge.techbridgeuser.resources.dtos.*;
 import es.techbridge.techbridgeuser.services.UserService;
 import es.techbridge.techbridgeuser.services.exceptions.ActivationTokenExpiredException;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Log4j2
@@ -35,6 +37,7 @@ public class UserResource {
     public static final String EMAIL_ID = "/email/{email}/id";
     public static final String ACTIVATE = "/activate";
     public static final String ACTIVATION_TOKEN = "/activation-token";
+    public static final String FILTERES = "/filtered";
 
     @Autowired
     public UserResource(UserService userService) {
@@ -177,6 +180,11 @@ public class UserResource {
     @GetMapping(EMAIL_ID)
     public UUID getIdByEmail(@PathVariable String email){
         return this.userService.getProfile(email).getId();
+    }
+
+    @PostMapping(FILTERES)
+    public List<UUID> getFilteredUserIds(@RequestBody UserFiltersDto userFiltersDto){
+        return this.userService.getFilteredUserIds(userFiltersDto);
     }
 
 }

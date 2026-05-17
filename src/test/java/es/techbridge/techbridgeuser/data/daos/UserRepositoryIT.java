@@ -1,5 +1,7 @@
 package es.techbridge.techbridgeuser.data.daos;
 
+import es.techbridge.techbridgeuser.data.entities.ContactPreference;
+import es.techbridge.techbridgeuser.data.entities.Province;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,4 +30,13 @@ class UserRepositoryIT {
 
     @Test
     void testFindById(){ assertThat(this.userRepository.findById(UUID.fromString("11111111-1111-1111-1111-111111111111"))).isPresent();}
+
+    @Test
+    void findSeniorIdsWithFilters_ShouldIgnoreBlankCity() {
+        assertThat(this.userRepository.findSeniorIdsWithFilters(
+                ContactPreference.TELEPHONE,
+                Province.MADRID,
+                ""
+        )).containsExactly(UUID.fromString("11111111-1111-1111-1111-111111111111"));
+    }
 }
