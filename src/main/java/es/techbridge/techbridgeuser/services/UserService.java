@@ -10,6 +10,7 @@ import es.techbridge.techbridgeuser.services.exceptions.ActivationTokenExpiredEx
 import es.techbridge.techbridgeuser.services.exceptions.BadRequestException;
 import es.techbridge.techbridgeuser.services.exceptions.ConflictException;
 import es.techbridge.techbridgeuser.services.exceptions.NotFoundException;
+import es.techbridge.techbridgeuser.services.exceptions.PasswordResetTokenExpiredException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,18 +30,21 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
     private final String activationUrl;
+    private final String recoverUrl;
 
     @Autowired
     public UserService(UserRepository userRepository,
                        VerificationTokenRepository verificationTokenRepository,
                        PasswordEncoder passwordEncoder,
                        MailService mailService,
-                       @Value("${app.activation-url:http://localhost:8081/users/activate}") String activationUrl){
+                       @Value("${app.activation-url:http://localhost:8081/users/activate}") String activationUrl,
+                       @Value("${app.recover-url:http://localhost:8081/users/forget-password-token}") String recoverUrl){
         this.userRepository = userRepository;
         this.verificationTokenRepository = verificationTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
         this.activationUrl = activationUrl;
+        this.recoverUrl = recoverUrl;
     }
 
     @Transactional
@@ -58,7 +62,7 @@ public class UserService {
 
     @Transactional
     public void activateAccount(String tokenValue){
-        VerificationToken token = verificationTokenRepository.findByToken(tokenValue)
+        VerificationToken token = verificationTokenRepository.findByTokenAndTokenType(tokenValue, VerificationTokenType.ACTIVATION)
                 .orElseThrow(() -> new BadRequestException("Invalid activation token"));
 
         if (Boolean.TRUE.equals(token.getUsed())) {
@@ -77,7 +81,7 @@ public class UserService {
 
     @Transactional
     public void resendActivationEmail(String expiredTokenValue){
-        VerificationToken expiredToken = verificationTokenRepository.findByToken(expiredTokenValue)
+        VerificationToken expiredToken = verificationTokenRepository.findByTokenAndTokenType(expiredTokenValue, VerificationTokenType.ACTIVATION)
                 .orElseThrow(() -> new BadRequestException("Invalid activation token"));
 
         if (Boolean.TRUE.equals(expiredToken.getUsed())) {
@@ -97,19 +101,31 @@ public class UserService {
     }
 
     private void sendActivationEmail(User user) {
-        verificationTokenRepository.deleteByUserAndUsedFalse(user);
-        String tokenValue = UUID.randomUUID().toString();
-        VerificationToken token = VerificationToken.builder()
-                .token(tokenValue)
-                .expirationDate(LocalDateTime.now().plusMinutes(2))
-                .used(false)
-                .user(user)
-                .build();
-        verificationTokenRepository.save(token);
-
+        String tokenValue = generateToken(user, VerificationTokenType.ACTIVATION, LocalDateTime.now().plusHours(24));
         String separator = activationUrl.contains("?") ? "&" : "?";
         String activationLink = activationUrl + separator + "token=" + tokenValue;
         mailService.sendActivationEmail(user.getEmail(), activationLink);
+    }
+
+    private void sendRecoverEmail(User user) {
+        String tokenValue = generateToken(user, VerificationTokenType.PASSWORD_RESET, LocalDateTime.now().plusMinutes(15));
+        String separator = recoverUrl.contains("?") ? "&" : "?";
+        String recoverLink = recoverUrl + separator + "token=" + tokenValue;
+        mailService.sendForgetPasswordEmail(user.getEmail(), recoverLink);
+    }
+
+    private String generateToken(User user, VerificationTokenType tokenType, LocalDateTime expirationDate){
+        verificationTokenRepository.deleteByUserAndUsedFalseAndTokenType(user, tokenType);
+        String tokenValue = UUID.randomUUID().toString();
+        VerificationToken token = VerificationToken.builder()
+                .token(tokenValue)
+                .expirationDate(expirationDate)
+                .used(false)
+                .tokenType(tokenType)
+                .user(user)
+                .build();
+        verificationTokenRepository.save(token);
+        return tokenValue;
     }
 
     public UserDto getProfile(String email){
@@ -189,4 +205,51 @@ public class UserService {
                 filtersDto.getCity());
     }
 
+    @Transactional
+    public void sendForgetPasswordEmail(String email){
+        if (email == null || email.isBlank()) {
+            return;
+        }
+
+        Optional<User> user = this.userRepository.findByEmail(email.trim());
+
+        if(user.isPresent() && Boolean.TRUE.equals(user.get().getActive())){
+            sendRecoverEmail(user.get());
+        }
+    }
+
+    @Transactional
+    public void changePasswordWithToken(String tokenValue, String newPassword, String confirmPassword) {
+        if (newPassword == null || newPassword.isBlank()) {
+            throw new BadRequestException("Password cannot be empty");
+        }
+        if (!newPassword.equals(confirmPassword)) {
+            throw new BadRequestException("Passwords do not match");
+        }
+
+        VerificationToken token = findValidPasswordResetToken(tokenValue);
+        User user = token.getUser();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        token.setUsed(true);
+        userRepository.save(user);
+        verificationTokenRepository.save(token);
+    }
+
+    @Transactional(readOnly = true)
+    public void validatePasswordResetToken(String tokenValue) {
+        findValidPasswordResetToken(tokenValue);
+    }
+
+    private VerificationToken findValidPasswordResetToken(String tokenValue) {
+        VerificationToken token = verificationTokenRepository.findByTokenAndTokenType(tokenValue, VerificationTokenType.PASSWORD_RESET)
+                .orElseThrow(() -> new BadRequestException("Invalid password reset token"));
+
+        if (Boolean.TRUE.equals(token.getUsed())) {
+            throw new BadRequestException("Password reset token has already been used");
+        }
+        if (token.getExpirationDate().isBefore(LocalDateTime.now())) {
+            throw new PasswordResetTokenExpiredException();
+        }
+        return token;
+    }
 }

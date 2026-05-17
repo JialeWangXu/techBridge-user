@@ -49,4 +49,26 @@ public class MailService {
             throw new MailingException(errorMessage);
         }
     }
+
+    @Async
+    public void sendForgetPasswordEmail(String emailTo, String recoverLink){
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(emailTo);
+            helper.setSubject("Recuperación de cuenta TechBridge");
+
+            Context context = new Context();
+            context.setVariable("recoverLink", recoverLink);
+            context.setVariable("logoUrl", publicBaseUrl + "/images/logo-clean.png");
+            String htmlContent = templateEngine.process("recover-email", context);
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            String errorMessage = "No se pudo enviar el email de recuperación de cuenta a "+emailTo;
+            log.error(errorMessage, e);
+            throw new MailingException(errorMessage);
+        }
+    }
 }

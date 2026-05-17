@@ -197,6 +197,7 @@ class UserServiceTest {
                 .token(UUID.randomUUID().toString())
                 .expirationDate(expirationDate)
                 .used(used)
+                .tokenType(VerificationTokenType.ACTIVATION)
                 .user(user)
                 .build());
     }
