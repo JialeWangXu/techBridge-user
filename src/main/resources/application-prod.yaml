@@ -17,6 +17,7 @@ spring:
         spa-logout-redirect-uri: ${LOGOUT_URI}
         api-client-id: ${API_CLIENT_ID}
         api-client-secret: ${API_CLIENT_SECRET}
+        spa-silence-renew-redirect-uri: ${API_CLIENT_SILENT_RENEW}
 
 eureka:
   client:
