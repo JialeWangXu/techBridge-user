@@ -130,7 +130,7 @@ public class AuthorizationServerConfig {
                         .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                         .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                         .redirectUri(this.oAuth2Properties.getSpaLoginRedirectUri())
-                        .redirectUri("http://localhost:4200/silent-renew.html")
+                        .redirectUri(this.oAuth2Properties.getSpaSilenceRenewRedirectUri())
                         .scopes(scopes -> scopes.addAll(OAuth2Scope.allJwtClaimValues()))
                         .tokenSettings(tokenSettings)
                         .clientSettings(ClientSettings.builder()
