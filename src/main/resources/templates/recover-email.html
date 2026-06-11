@@ -1,36 +1,40 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<body style="margin:0; padding:0; background-color:#f6f8fb; font-family:'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-<div style="width:100%; background-color:#f6f8fb; padding:32px 12px;">
-    <div style="max-width:640px; margin:0 auto; background:#ffffff; border-radius:24px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,0.08);">
-        <div style="padding:34px 30px 18px 30px; text-align:left;">
-            <img th:src="${logoUrl}" src="../static/images/logo-clean.png" alt="TechBridge" style="height:54px; width:auto; display:block;">
+<body style="margin:0; padding:0; background-color:#f5f7fb; font-family:'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+<div style="width:100%; background-color:#f5f7fb; padding:32px 12px;">
+    <div style="max-width:640px; margin:0 auto; background:#ffffff; border:1px solid #d8dee8; border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(16,24,40,0.08);">
+        <div style="padding:32px 32px 12px 32px; text-align:left;">
+            <img th:src="${logoUrl}" src="../static/images/logo-clean.png" alt="TechBridge" style="height:48px; width:auto; display:block;">
         </div>
 
-        <div style="padding:10px 30px 36px 30px; text-align:center;">
-            <h1 style="margin:0 0 14px 0; color:#333333; font-size:32px; line-height:1.2; font-weight:800;">
+        <div style="padding:16px 32px 36px 32px; text-align:left;">
+            <p style="margin:0 0 8px 0; color:#667085; font-size:13px; line-height:1.4; font-weight:800; letter-spacing:0.08em; text-transform:uppercase;">
+                Seguridad de cuenta
+            </p>
+
+            <h1 style="margin:0 0 14px 0; color:#07345f; font-size:30px; line-height:1.2; font-weight:800;">
                 Cambie su contrase&ntilde;a
             </h1>
 
-            <p style="margin:0 auto 28px auto; color:#555555; font-size:20px; line-height:1.5; max-width:520px;">
+            <p style="margin:0 0 28px 0; color:#667085; font-size:18px; line-height:1.55;">
                 Hemos recibido una solicitud para recuperar su cuenta de TechBridge. Pulse el bot&oacute;n para crear una nueva contrase&ntilde;a.
             </p>
 
             <a th:href="${recoverLink}" href="#"
-               style="display:block; width:100%; box-sizing:border-box; padding:22px 24px; background-color:#8EBFFB; color:#003366; text-decoration:none; border-radius:14px; font-size:24px; line-height:1.25; font-weight:900; box-shadow:0 4px 15px rgba(142, 191, 251, 0.4);">
+               style="display:block; width:100%; box-sizing:border-box; padding:18px 24px; background-color:#0f4c81; color:#ffffff; text-decoration:none; border-radius:12px; font-size:20px; line-height:1.25; font-weight:800; text-align:center;">
                 Cambiar mi contrase&ntilde;a
             </a>
 
-            <p style="margin:28px auto 0 auto; color:#666666; font-size:18px; line-height:1.5; max-width:520px;">
+            <p style="margin:28px 0 0 0; color:#667085; font-size:16px; line-height:1.55;">
                 Este enlace caduca en 15 minutos. Si no ha solicitado este cambio, puede ignorar este correo.
             </p>
 
-            <p style="margin:24px auto 0 auto; color:#555555; font-size:16px; line-height:1.5; max-width:520px;">
+            <p style="margin:24px 0 0 0; color:#667085; font-size:15px; line-height:1.55;">
                 Si el bot&oacute;n no funciona, copie y pegue este enlace en el navegador:
             </p>
 
-            <p style="margin:8px auto 0 auto; word-break:break-all; color:#003366; font-size:15px; line-height:1.5; max-width:520px;">
-                <a th:href="${recoverLink}" th:text="${recoverLink}" href="#" style="color:#003366;">recover-link</a>
+            <p style="margin:8px 0 0 0; word-break:break-all; color:#0f4c81; font-size:14px; line-height:1.5;">
+                <a th:href="${recoverLink}" th:text="${recoverLink}" href="#" style="color:#0f4c81; font-weight:700;">recover-link</a>
             </p>
         </div>
     </div>

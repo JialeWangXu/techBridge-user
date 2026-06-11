@@ -3,295 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - TechBridge</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* Altura exacta de la ventana */
-            background-color: #f6f8fb;
-            overflow: hidden; /* Evita scroll en el body */
-        }
-
-        .main-container {
-            display: flex;
-            width: 90%;
-            max-width: 1100px;
-            height: 85vh; /* Altura controlada para evitar scroll vertical */
-            background: white;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-        }
-
-        /* --- ZONA IZQUIERDA --- */
-        .left-side {
-            flex: 1.2;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            background-color: #ffffff;
-        }
-
-        .image-logo-container {
-            display: flex;
-            justify-content: flex-start; /* Alineado a la izquierda */
-            margin-bottom: 20px;
-        }
-
-        .logo-image {
-            height: 50px; /* Tamaño fijo para controlarlo mejor */
-            width: auto;
-            object-fit: contain;
-        }
-
-        .welcome-text h1 {
-            font-size: 2.5rem;
-            margin: 0;
-            color: #333;
-            line-height: 1.1;
-        }
-
-        .welcome-text h2 {
-            font-size: 1.8rem;
-            margin: 10px 0;
-            color: #555;
-            font-weight: 400;
-        }
-
-        .welcome-text p {
-            color: #888;
-            margin: 5px 0;
-        }
-
-        .welcome-text a {
-            color: #8EBFFB;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .image-container {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .character-image {
-            max-height: 80%; /* Para que no empuje el contenedor hacia abajo */
-            max-width: 100%;
-            object-fit: contain;
-            transform: scale(0.7);
-        }
-
-        /* --- ZONA DERECHA --- */
-        .right-side {
-            flex: 1;
-            background-color: #fdfdff;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-        }
-
-        /* Logo para el modo móvil (oculto por defecto) */
-        .mobile-logo {
-            display: none;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-
-        .right-side h3 {
-            font-size: 1.8rem;
-            margin-bottom: 30px;
-            color: #333;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 18px 15px 10px 15px;
-            border: none;
-            border-radius: 12px;
-            background-color: #F1F4FA;
-            font-size: 1rem;
-            box-sizing: border-box;
-        }
-
-        .input-group input:focus {
-            outline: 2px solid #8EBFFB;
-        }
-
-        .input-group label {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #aaa;
-            transition: all 0.2s;
-            pointer-events: none;
-        }
-
-        .input-group input:focus ~ label,
-        .input-group input:not(:placeholder-shown) ~ label {
-            top: 10px;
-            font-size: 0.75rem;
-            color: #8EBFFB;
-        }
-
-        .forgot-password {
-            text-align: right;
-            margin-bottom: 30px;
-        }
-
-        .forgot-password a {
-            color: #aaa;
-            font-size: 0.85rem;
-            text-decoration: none;
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 16px;
-            background-color: #8EBFFB; /* Tu color original */
-            color: #003366; /* Azul muy oscuro para máximo contraste con el azul claro */
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 800; /* Texto bien grueso para que sea súper legible */
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(142, 191, 251, 0.4);
-            transition: 0.3s;
-            text-transform: uppercase; /* Opcional: le da un toque más de botón de acción */
-            letter-spacing: 0.5px;
-        }
-
-        .login-btn:hover {
-            background-color: #7ab2f0;
-            color: #002244; /* Oscurecemos también el texto al pasar el ratón */
-        }
-        .error-message {
-            /* Un rojo mucho más oscuro para que destaque sobre el rosa claro */
-            color: #842029;
-            background-color: #f8d7da;
-            border: 1px solid #f5c2c7; /* Añadimos un borde sutil para definir el área */
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-            font-weight: 500; /* Un poco más de grosor ayuda a la lectura */
-            text-align: center;
-        }
-
-        /* --- RESPONSIVE --- */
-        @media (max-width: 850px) {
-            body {
-                overflow: auto; /* Permitir scroll solo si el móvil es muy pequeño */
-                padding: 20px 0;
-            }
-            .main-container {
-                flex-direction: column;
-                height: auto;
-                width: 95%;
-                max-width: 450px;
-            }
-            .left-side {
-                display: none; /* Escondemos el lateral en móvil */
-            }
-            .right-side {
-                padding: 40px 30px;
-            }
-            .mobile-logo {
-                display: flex; /* Mostramos el logo arriba del Sign in */
-            }
-            .mobile-logo .logo-image {
-                height: 60px;
-            }
-        }
-    </style>
+    <title>Iniciar sesi&oacute;n - TechBridge</title>
+    <link rel="stylesheet" th:href="@{/css/auth-pages.css}">
 </head>
-<body>
-<div class="main-container">
-    <div class="left-side">
-        <div class="image-logo-container">
-            <img th:src="@{/images/logo-clean.png}" alt="logo TechBridge" class="logo-image">
-        </div>
-        <div class="welcome-text">
-            <h1>Inicia sesión en</h1>
-            <h2>TechBridge</h2> <p>If you don't have an account register</p>
-            <p>You can <a th:href="${@environment.getProperty('app.register')}">Register here!</a></p>
-        </div>
-        <div class="image-container">
-            <img th:src="@{/images/personaje.png}" alt="Personaje 3D" class="character-image">
-        </div>
-    </div>
+<body class="auth-page">
+<main class="auth-shell">
+    <section class="auth-brand" aria-label="Bienvenida a TechBridge">
+        <div>
+            <img th:src="@{/images/logo-clean.png}" alt="TechBridge" class="logo-image">
 
-    <div class="right-side">
+            <div class="brand-copy">
+                <p class="section-label">Acceso seguro</p>
+                <h1>Inicia sesi&oacute;n en TechBridge</h1>
+                <p>Accede a tu espacio para pedir ayuda tecnol&oacute;gica o acompa&ntilde;ar a otras personas como voluntario.</p>
+                <p>&iquest;Todav&iacute;a no tienes cuenta? <a th:href="${@environment.getProperty('app.register')}">Reg&iacute;strate aqu&iacute;</a>.</p>
+            </div>
+        </div>
+
+        <div class="auth-visual">
+            <img th:src="@{/images/personaje.png}" alt="Persona usando TechBridge" class="character-image">
+        </div>
+    </section>
+
+    <section class="auth-panel" aria-label="Formulario de inicio de sesi&oacute;n">
         <div class="mobile-logo">
-            <img th:src="@{/images/logo-clean.png}" alt="logo TechBridge" class="logo-image">
+            <img th:src="@{/images/logo-clean.png}" alt="TechBridge" class="logo-image">
         </div>
 
-        <h3>Sign in</h3>
+        <div class="auth-heading">
+            <p class="section-label">TechBridge</p>
+            <h2>Iniciar sesi&oacute;n</h2>
+            <p>Introduce tus datos para continuar.</p>
+        </div>
 
         <form th:action="@{/login}" method="post">
-            <div th:if="${param.error}" class="error-message">
+            <div th:if="${param.error}" class="alert-message alert-error" role="alert">
                 <th:block th:with="lastExc=${session['SPRING_SECURITY_LAST_EXCEPTION']}">
 
                     <div th:if="${lastExc != null}">
 
                         <div th:if="${lastExc instanceof T(org.springframework.security.authentication.DisabledException)}">
-                            <i class="bi bi-exclamation-circle-fill me-2"></i>
-                            <strong>Tu cuenta aún no está activa.</strong>
+                            <strong>Tu cuenta a&uacute;n no est&aacute; activa.</strong>
                             <br>Por favor, revisa tu correo y pulsa en el enlace que te enviamos para activarla.
                         </div>
 
                         <div th:if="${lastExc instanceof T(org.springframework.security.authentication.BadCredentialsException)}">
-                            <i class="bi bi-x-circle-fill me-2"></i>
-                            <strong>Email o contraseña incorrectos.</strong>
-                            <br>Por favor, verifica tus datos e inténtalo de nuevo.
+                            <strong>Email o contrase&ntilde;a incorrectos.</strong>
+                            <br>Por favor, verifica tus datos e int&eacute;ntalo de nuevo.
                         </div>
 
                         <div th:if="${!(lastExc instanceof T(org.springframework.security.authentication.DisabledException)) && !(lastExc instanceof T(org.springframework.security.authentication.BadCredentialsException))}">
-                            <i class="bi bi-shield-lock-fill me-2"></i>
-                            Ha ocurrido un problema al iniciar sesión. Inténtalo más tarde.
+                            Ha ocurrido un problema al iniciar sesi&oacute;n. Int&eacute;ntalo m&aacute;s tarde.
                         </div>
 
                     </div>
 
                     <div th:if="${lastExc == null}">
-                        Email o contraseña incorrectos.
+                        Email o contrase&ntilde;a incorrectos.
                     </div>
 
                 </th:block>
             </div>
 
-            <div class="input-group">
-                <input type="text" name="username" id="username" placeholder=" " required autofocus>
-                <label for="username">Enter email</label>
+            <div class="form-group">
+                <label for="username">Email</label>
+                <input type="text" name="username" id="username" autocomplete="email" required autofocus>
             </div>
 
-            <div class="input-group">
-                <input type="password" name="password" id="password" placeholder=" " required>
-                <label for="password">Password</label>
+            <div class="form-group">
+                <label for="password">Contrase&ntilde;a</label>
+                <input type="password" name="password" id="password" autocomplete="current-password" required>
             </div>
 
             <div class="forgot-password">
-                <a th:href="@{/users/forget-password}">Forgot password?</a>
+                <a th:href="@{/users/forget-password}" class="text-link">&iquest;Has olvidado tu contrase&ntilde;a?</a>
             </div>
 
-            <button type="submit" class="login-btn">Login</button>
+            <button type="submit" class="primary-btn">Iniciar sesi&oacute;n</button>
         </form>
-    </div>
-</div>
+    </section>
+</main>
 </body>
 </html>
