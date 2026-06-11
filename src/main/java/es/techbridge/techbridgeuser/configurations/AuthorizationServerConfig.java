@@ -73,7 +73,7 @@ public class AuthorizationServerConfig {
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
                         .contentSecurityPolicy(csp -> csp
-                                .policyDirectives("frame-ancestors 'self' *")
+                                .policyDirectives("frame-ancestors 'self' " + oAuth2Properties.getSpaLogoutRedirectUri())
                         )
                 )
                 .with(authorizationServerConfigurer, authorizationServer ->
@@ -98,14 +98,14 @@ public class AuthorizationServerConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/error", "/actuator","/images/**", "/users/activate", "/users/activation-token",
+                        .requestMatchers("/login", "/error", "/actuator", "/images/**", "/css/**", "/users/activate", "/users/activation-token",
                                 "/users/forget-password", "/users/forget-password-token").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
                     .contentSecurityPolicy(csp -> csp
-                       .policyDirectives("frame-ancestors 'self' http://localhost:4200")
+                       .policyDirectives("frame-ancestors 'self' " + oAuth2Properties.getSpaLogoutRedirectUri())
                     )
                  )
                 .formLogin(form -> form
